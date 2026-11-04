@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>Notice</title>
+  <style>
+    *{box-sizing:border-box} body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:#f3f4f6;color:#111827;font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif}
+    main{width:min(100%,440px);background:white;padding:28px;border-radius:22px;box-shadow:0 12px 40px #11182714;text-align:center}
+    h1{margin:0 0 8px;font-size:28px} p{line-height:1.65;color:#4b5563}
+    button{width:100%;border:0;border-radius:16px;padding:19px;background:#dc2626;color:white;font-size:22px;font-weight:800;cursor:pointer}
+    button:disabled{opacity:.6;cursor:wait} #status{margin-top:18px;min-height:48px;font-size:15px}
+    .note{font-size:13px;color:#6b7280;margin-top:18px}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Look</h1>
+    <p>Here...</p>
+    <button id="sos">See</button>
+    <div id="status" role="status" aria-live="polite"></div>
+    <p class="note"> </p>
+  </main>
+<script>
+const button = document.getElementById("sos");
+const statusBox = document.getElementById("status");
+button.addEventListener("click", () => {
+  if (!("geolocation" in navigator)) {
+    statusBox.textContent = " ";
+    return;
+  }
+  button.disabled = true;
+  statusBox.textContent = " ";
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    const { latitude, longitude, accuracy } = position.coords;
+    try {
+      const response = await fetch("/api/send-sos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ latitude, longitude, accuracy })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Unsuccessful");
+      statusBox.textContent = "Wait...";
+    } catch (error) {
+      statusBox.textContent = "Unsuccessful" + error.message;
+      button.disabled = false;
+    }
+  }, (error) => {
+    const messages = {
+      1: "Allow and try again",
+      2: "On GPS and try again",
+      3: "Time out, try again"
+    };
+    statusBox.textContent = messages[error.code] || "Not found";
+    button.disabled = false;
+  }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });
+});
+</script>
+</body>
+</html>
