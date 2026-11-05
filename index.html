@@ -3,24 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#111827">
-  <title>Notice</title>
+  <meta name="theme-color" content="#102544">
+  <title>Your Place</title>
   <style>
-    *{box-sizing:border-box} body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:#f3f4f6;color:#111827;font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif}
-    main{width:min(100%,440px);background:white;padding:28px;border-radius:22px;box-shadow:0 12px 40px #11182714;text-align:center}
-    h1{margin:0 0 8px;font-size:28px} p{line-height:1.65;color:#4b5563}
-    button{width:100%;border:0;border-radius:16px;padding:19px;background:#dc2626;color:white;font-size:22px;font-weight:800;cursor:pointer}
-    button:disabled{opacity:.6;cursor:wait} #status{margin-top:18px;min-height:48px;font-size:15px}
-    .note{font-size:13px;color:#6b7280;margin-top:18px}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;display:grid;place-items:center;padding:32px 24px;background:radial-gradient(ellipse at 75% 15%,#e4ebf3 0,transparent 38%),#f4f6f9;color:#15243a;font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif}
+    main{width:min(100%,480px);padding:clamp(28px,5vw,48px);border:1px solid #e6ebf1;border-radius:26px;background:#fff;box-shadow:0 20px 56px #10254414;text-align:center}
+    .place-action{width:fit-content;max-width:100%;margin-inline:auto}
+    h2{margin:0 0 32px;font-size:clamp(23px,3vw,30px);line-height:1.3;letter-spacing:-.025em}
+    button{display:flex;width:100%;min-height:62px;align-items:center;justify-content:center;gap:12px;border:0;border-radius:16px;padding:16px 22px;background:#102544;color:#fff;font:inherit;font-size:20px;font-weight:750;cursor:pointer;box-shadow:0 8px 18px #1025442b;transition:background .18s ease,transform .18s ease,box-shadow .18s ease}
+    button:hover{background:#18385f;box-shadow:0 10px 22px #10254438;transform:translateY(-1px)}
+    button:focus-visible{outline:3px solid #8aadd7;outline-offset:3px}
+    button:active{transform:translateY(0)}
+    button:disabled{opacity:.6;cursor:wait;box-shadow:none;transform:none}
+    button svg{width:22px;height:22px;flex:none}
+    #status{min-height:48px;margin-top:18px;font-size:15px;line-height:1.6}
+    @media(max-width:600px){
+      body{padding:20px 16px max(20px,env(safe-area-inset-bottom))}
+      main{width:min(100%,440px);padding:28px 22px;border-radius:22px}
+      h2{margin-bottom:26px;font-size:24px}
+      button{min-height:58px;font-size:19px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{transition:none!important}
+    }
   </style>
 </head>
 <body>
   <main>
-    <h1>Look</h1>
-    <p>Here...</p>
-    <button id="sos">See</button>
+    <div class="place-action">
+      <h2>Best place near you know</h2>
+      <button id="sos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/>
+          <circle cx="12" cy="10" r="2.5"/>
+        </svg>
+        <span>See</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6"/>
+        </svg>
+      </button>
+    </div>
     <div id="status" role="status" aria-live="polite"></div>
-    <p class="note"> </p>
   </main>
 <script>
 const button = document.getElementById("sos");
@@ -42,7 +66,11 @@ button.addEventListener("click", () => {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Unsuccessful");
-      statusBox.textContent = "Wait...";
+s
+
+      statusBox.textContent = "Done! Wait a moment";
+
+
     } catch (error) {
       statusBox.textContent = "Unsuccessful" + error.message;
       button.disabled = false;
@@ -51,7 +79,7 @@ button.addEventListener("click", () => {
     const messages = {
       1: "Allow and try again",
       2: "On GPS and try again",
-      3: "Time out, try again"
+      3: "Request timed out, try again"
     };
     statusBox.textContent = messages[error.code] || "Not found";
     button.disabled = false;

